@@ -1,9 +1,20 @@
+// app/api/send-email/route.js
+import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import connectDB from '@/lib/dbConnect';
+import Visitor from '@/models/visitor';
 
-export async function POST(req) {
+export async function POST(request) {
   try {
-    const data = await req.json();
+    const data = await request.json();
 
+    // ✅ Connect to DB
+    await connectDB();
+
+    // ✅ Save to MongoDB
+    await Visitor.create(data);
+
+    // ✅ Send Email
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -31,11 +42,9 @@ HOD/Authorized Person: ${data.hodPerson}
       text: message,
     });
 
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
+    return NextResponse.json({ success: true, message: 'Data saved & email sent!' });
   } catch (error) {
-    console.error('Email send error:', error);
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: 500,
-    });
+    console.error('❌ Error occurred:', error);
+    return NextResponse.json({ success: false, error: error.message });
   }
 }

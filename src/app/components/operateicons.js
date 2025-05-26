@@ -14,12 +14,7 @@ export default function ActionButtons({ onAdd, onDelete, onSend }) {
           <FontAwesomeIcon icon={faTrash} className="text-[#702e1f]" />
         </button>
       </div>
-      <button
-        onClick={onSend}
-        className="w-[3cm] mr-2 px-4 py-2 bg-[#702e1f] text-white rounded-lg border border-[#702e1f] hover:bg-[#702e1f] hover:text-white transition"
-      >
-        Send
-      </button>
+     
     </div>
   );
 }

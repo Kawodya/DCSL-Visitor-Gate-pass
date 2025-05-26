@@ -44,7 +44,7 @@ export default function Detailtable() {
     setExtraRows(updatedRows);
   };
 
-  // ✅ Email sending function with improved error handling
+  // Email sending function WITHOUT database references
   const handleSendEmail = async () => {
     const names = [userInputs[0], ...extraRows.map(row => row.name)];
     const nics = [userInputs[1], ...extraRows.map(row => row.nic)];
@@ -61,34 +61,26 @@ export default function Detailtable() {
       hodPerson: userInputs[7],
     };
 
+    alert("Sending data:\n" + JSON.stringify(payload, null, 2));
+
     try {
-  const res = await fetch('/api/send-email', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-  let result;
-  try {
-    result = await res.clone().json(); // ✅ clone so body is still readable
-  } catch (err) {
-    const text = await res.text(); // now this works fine
-    console.error('❌ Not JSON:', text);
-    alert('❌ Backend returned an unexpected response. Status: ' + res.status);
-    return;
-  }
+      const result = await res.json();
 
-  if (result.success) {
-    alert('✅ Email sent successfully!');
-  } else {
-    alert('❌ Failed to send email.');
-  }
-} catch (error) {
-  console.error('❌ Error sending email:', error);
-  alert('❌ Error occurred while sending email.');
-}
-
-
+      if (result.success) {
+        alert('✅ Email sent successfully!');
+      } else {
+        alert('❌ Failed to send email.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('❌ Error occurred while sending data.');
+    }
   };
 
   return (
@@ -177,12 +169,14 @@ export default function Detailtable() {
       <ActionButtons onAdd={handleAddRow} onDelete={handleDeleteRow} />
 
       {/* Email send button */}
-      <button
-        onClick={handleSendEmail}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Send 
-      </button>
+      <div className="flex justify-end">
+        <button
+          onClick={handleSendEmail}
+          className="mt-4 px-4 py-2 bg-[#702E1F] text-white rounded hover:bg-[#702E1F]"
+        >
+          Send
+        </button>
+      </div>
     </div>
   );
 }
