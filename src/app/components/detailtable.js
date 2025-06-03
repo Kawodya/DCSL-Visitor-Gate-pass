@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import ActionButtons from './operateicons'; // Adjust path if needed
+import ActionButtons from './operateicons';
+import { useRouter } from 'next/navigation';
 
 export default function Detailtable() {
+  const router = useRouter();
+
   const columns = [
     'Visitor Name',
     'NIC',
@@ -16,10 +19,8 @@ export default function Detailtable() {
     'HOD/Authorized person',
   ];
 
-  // User inputs for first (main) row except Department (handled separately)
   const [userInputs, setUserInputs] = useState(Array(8).fill(''));
   const [department, setDepartment] = useState('');
-  // Additional visitor rows, only for name and NIC
   const [extraRows, setExtraRows] = useState([]);
 
   const handleChange = (inputIndex, value) => {
@@ -28,17 +29,12 @@ export default function Detailtable() {
     setUserInputs(newData);
   };
 
-  const handleDepartmentChange = (e) => {
-    setDepartment(e.target.value);
-  };
+  const handleDepartmentChange = (e) => setDepartment(e.target.value);
 
-  const handleAddRow = () => {
-    setExtraRows([...extraRows, { name: '', nic: '' }]);
-  };
+  const handleAddRow = () => setExtraRows([...extraRows, { name: '', nic: '' }]);
 
   const handleDeleteRow = () => {
-    if (extraRows.length === 0) return;
-    setExtraRows(extraRows.slice(0, -1));
+    if (extraRows.length > 0) setExtraRows(extraRows.slice(0, -1));
   };
 
   const handleExtraRowChange = (index, field, value) => {
@@ -47,8 +43,7 @@ export default function Detailtable() {
     setExtraRows(updatedRows);
   };
 
-  //send email function
-  const handleSendEmail = async () => {
+  const handleSend = async () => {
     const names = [userInputs[0], ...extraRows.map((row) => row.name)];
     const nics = [userInputs[1], ...extraRows.map((row) => row.nic)];
 
@@ -72,32 +67,31 @@ export default function Detailtable() {
         body: JSON.stringify(payload),
       });
 
-      if (!emailRes.ok) throw new Error('❌ Failed to send email.');
-
       const emailResult = await emailRes.json();
-      if (!emailResult.success) throw new Error('❌ Email sending failed: ' + emailResult.error);
+      if (!emailRes.ok || !emailResult.success) {
+        throw new Error(emailResult.error || 'Email sending failed');
+      }
 
-      // 2. Save to Excel
+      // 2. Save to Excel & History
       const saveRes = await fetch('/api/visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      if (!saveRes.ok) throw new Error('❌ Failed to save to Excel.');
-
       const saveResult = await saveRes.json();
-      if (!saveResult.success) throw new Error('❌ Excel save failed: ' + saveResult.error);
+      if (!saveRes.ok || !saveResult.success) {
+        throw new Error(saveResult.error || 'Saving failed');
+      }
 
-      alert('✅ Email sent and Excel file saved successfully!');
+      alert('✅ Email sent and data saved to Excel + History!');
     } catch (error) {
       console.error(error);
-      alert('❌ An error occurred:\n' + error.message);
+      alert('❌ ' + error.message);
     }
   };
 
-  // Download Excel function
-  async function handleDownloadExcel() {
+  const handleDownloadExcel = async () => {
     try {
       const response = await fetch('/api/download-excel');
       if (!response.ok) throw new Error('Failed to download file');
@@ -116,7 +110,7 @@ export default function Detailtable() {
     } catch (err) {
       alert('Download failed: ' + err.message);
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -124,9 +118,7 @@ export default function Detailtable() {
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col} className="border border-gray-400 px-3 py-3">
-                {col}
-              </th>
+              <th key={col} className="border border-gray-400 px-3 py-3">{col}</th>
             ))}
           </tr>
         </thead>
@@ -135,32 +127,14 @@ export default function Detailtable() {
             {columns.map((col, colIndex) => {
               if (col === 'Department') {
                 return (
-                  <td
-                    key="department"
-                    className="border border-gray-400 p-1 bg-gray-100"
-                    rowSpan={extraRows.length > 0 ? extraRows.length + 1 : 1}
-                  >
+                  <td key="department" className="border border-gray-400 p-1 bg-gray-100" rowSpan={extraRows.length + 1}>
                     <div className="flex flex-col gap-1 max-h-[200px] overflow-y-auto">
                       {[
-                        'Admin',
-                        'Brewing',
-                        'Engineering',
-                        'Finance',
-                        'Human Resource',
-                        'Information Technology',
-                        'Logistics & Warehouse',
-                        'Planning',
-                        'Packaging',
-                        'Quality',
-                        'Supply Chain',
-                        'Safety',
-                        'Security',
-                        'Utility',
+                        'Admin', 'Brewing', 'Engineering', 'Finance', 'Human Resource',
+                        'Information Technology', 'Logistics & Warehouse', 'Planning',
+                        'Packaging', 'Quality', 'Supply Chain', 'Safety', 'Security', 'Utility',
                       ].map((dept) => (
-                        <label
-                          key={dept}
-                          className="flex items-center gap-2 text-sm whitespace-nowrap"
-                        >
+                        <label key={dept} className="flex items-center gap-2 text-sm whitespace-nowrap">
                           <input
                             type="radio"
                             name="department"
@@ -177,7 +151,6 @@ export default function Detailtable() {
                 );
               }
 
-              // Because Department cell spans rows, exclude it from textareas
               const inputIndex = colIndex < 3 ? colIndex : colIndex - 1;
 
               return (
@@ -195,7 +168,6 @@ export default function Detailtable() {
 
           {extraRows.map((row, index) => (
             <tr key={index}>
-              {/* Visitor Name */}
               <td className="border border-gray-400 p-1">
                 <textarea
                   value={row.name}
@@ -204,7 +176,6 @@ export default function Detailtable() {
                   rows={3}
                 />
               </td>
-              {/* NIC */}
               <td className="border border-gray-400 p-1">
                 <textarea
                   value={row.nic}
@@ -213,7 +184,6 @@ export default function Detailtable() {
                   rows={3}
                 />
               </td>
-              {/* Empty cells for other columns */}
               {[...Array(7)].map((_, i) => (
                 <td key={i} className="border border-gray-400 p-1"></td>
               ))}
@@ -222,13 +192,11 @@ export default function Detailtable() {
         </tbody>
       </table>
 
-      {/* Add/Delete buttons */}
       <ActionButtons onAdd={handleAddRow} onDelete={handleDeleteRow} />
 
-      {/* Send & Download buttons */}
       <div className="flex justify-end gap-4 mt-4">
         <button
-          onClick={handleSendEmail}
+          onClick={handleSend}
           className="px-4 py-2 bg-[#702E1F] text-white rounded hover:bg-[#702E1F]"
         >
           Send
@@ -242,12 +210,11 @@ export default function Detailtable() {
         </button>
 
         <button
-        onClick={() => alert('History button clicked')} // Replace this with your actual logic
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-  >
-        History
-       </button>
-        
+          onClick={() => router.push('/datagui')}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          History
+        </button>
       </div>
     </div>
   );

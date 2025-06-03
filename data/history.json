@@ -1,0 +1,26 @@
+[
+  {
+    "visitorNames": "A\nB\nC",
+    "visitorNICs": "1\n2\n3",
+    "visitCompany": "A",
+    "department": "Admin",
+    "reason": "A",
+    "dateOfVisit": "A",
+    "endVisit": "A",
+    "vehicleNumber": "A",
+    "hodPerson": "A",
+    "timestamp": "2025-06-02T10:51:13.945Z"
+  },
+  {
+    "visitorNames": "A",
+    "visitorNICs": "1",
+    "visitCompany": "A",
+    "department": "Admin",
+    "reason": "A",
+    "dateOfVisit": "A",
+    "endVisit": "A",
+    "vehicleNumber": "A",
+    "hodPerson": "A",
+    "timestamp": "2025-06-03T02:55:47.573Z"
+  }
+]
