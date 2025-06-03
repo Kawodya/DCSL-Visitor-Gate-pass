@@ -60,7 +60,6 @@ export default function Detailtable() {
     };
 
     try {
-      // 1. Send Email
       const emailRes = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,7 +71,6 @@ export default function Detailtable() {
         throw new Error(emailResult.error || 'Email sending failed');
       }
 
-      // 2. Save to Excel & History
       const saveRes = await fetch('/api/visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,6 +83,12 @@ export default function Detailtable() {
       }
 
       alert('✅ Email sent and data saved to Excel + History!');
+
+      // Clear form fields
+      setUserInputs(Array(8).fill(''));
+      setDepartment('');
+      setExtraRows([]);
+
     } catch (error) {
       console.error(error);
       alert('❌ ' + error.message);
@@ -129,8 +133,7 @@ export default function Detailtable() {
                 return (
                   <td key="department" className="border border-gray-400 p-1 bg-gray-100" rowSpan={extraRows.length + 1}>
                     <div className="flex flex-col gap-1 max-h-[200px] overflow-y-auto">
-                      {[
-                        'Admin', 'Brewing', 'Engineering', 'Finance', 'Human Resource',
+                      {[ 'Admin', 'Brewing', 'Engineering', 'Finance', 'Human Resource',
                         'Information Technology', 'Logistics & Warehouse', 'Planning',
                         'Packaging', 'Quality', 'Supply Chain', 'Safety', 'Security', 'Utility',
                       ].map((dept) => (
