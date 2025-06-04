@@ -26,10 +26,10 @@ export default function DataGuiPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4">
+    <div className="min-h-screen bg-[#fff979] p-4">
       <HeadComponent />
 
-      <h1 className="text-xl font-bold mt-1 text-center">
+      <h1 className="text-xl text-[#702E1F] font-bold mt-1 text-center">
         Visitor Gate Pass History
       </h1>
 
@@ -41,7 +41,7 @@ export default function DataGuiPage() {
             placeholder="Search by NIC"
             value={searchNIC}
             onChange={(e) => setSearchNIC(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-black rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
           />
           <button className="ml-2" onClick={handleSearch}>
             <FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: '#692418' }} />
@@ -57,13 +57,13 @@ export default function DataGuiPage() {
         <div className="absolute right-0 -bottom-16 flex gap-4">
           <button
             onClick={handleRefresh}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-[#702E1F] text-white rounded hover:bg-[#702E1F]"
           >
             Refresh
           </button>
           <button
             onClick={handleBack}
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+            className="px-4 py-2 bg-[#702E1F] text-white rounded hover:bg-[#702E1F]"
           >
             Back
           </button>

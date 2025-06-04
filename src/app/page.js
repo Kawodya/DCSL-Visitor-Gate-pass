@@ -6,7 +6,7 @@ import HeadComponent from "./components/head";
 // create the export default function
 export default function Home(){
   return(
-    <div>
+    <div className="bg-[#fff979] min-h-screen">
       <HeadComponent/>
       <Detailtable/>
   

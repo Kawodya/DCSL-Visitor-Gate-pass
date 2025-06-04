@@ -19,7 +19,7 @@ async function sendEmail(data) {
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: process.env.EMAIL_USER,
+    to: 'lmadurapperuma10@gmail.com',
     subject: 'Visitor GatePass',
     text: `🧍 Visitors:
 ${visitorLines.join('\n')}
@@ -43,7 +43,7 @@ export async function POST(req) {
   try {
     const data = await req.json();
 
-    if (
+    if (   //
       !data ||
       !Array.isArray(data.visitorNames) ||
       !Array.isArray(data.visitorNICs)

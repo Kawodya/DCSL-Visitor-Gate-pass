@@ -23,7 +23,7 @@ const roboto=Roboto({
                priority        // ← add this
             
             />
-            <h1 className={`${roboto.className}text-lg font-semibold`}>
+            <h1 className={`${roboto.className}text-726px font-bold mt-2 text-[#702E1F]`}>
                 Visitor Gate Pass
             </h1>
           
